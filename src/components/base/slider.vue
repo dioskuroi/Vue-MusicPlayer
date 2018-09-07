@@ -95,9 +95,21 @@ export default {
         // 调用 BScroll 的 goToPage(x轴索引，y轴索引，动画持续事件) 来实现自动轮播
         this.slider.goToPage(pageIndex, 0, 400)
       }, this.interval)
+    },
+    // 窗口改变
+    handleResize() {
+      if (!this.slider) {
+        return false
+      }
+      // 重新计算 slider 的宽度和每个 slider-item 的宽度
+      this._setSliderWidth(true)
+      // 重新刷新整个 slider
+      this.slider.refresh()
     }
   },
   mounted() {
+    // dom 渲染到页面上需要 20 ms 的时间，所以我们定义一个定时器，让他在 20ms 后再执行轮播图初始化，
+    // 这样就能保证组件正确的加载
     setTimeout(() => {
       this._setSliderWidth()
       this._initDot()
@@ -106,16 +118,13 @@ export default {
         this._autoPlay()
       }
       // 当屏幕尺寸发生变化时，重新计算 slider 的宽度
-      window.addEventListener('resize', () => {
-        if (!this.slider) {
-          return false
-        }
-        // 重新计算 slider 的宽度和每个 slider-item 的宽度
-        this._setSliderWidth(true)
-        // 重新刷新整个 slider
-        this.slider.refresh()
-      })
+      window.addEventListener('resize', this.handleResize)
     }, 20)
+  },
+  // 组件摧毁时去清理定时器，或者其他绑定的事件
+  beforeDestroy() {
+    clearTimeout(this.timer)
+    window.removeEventListener('resize', this.handleResize)
   }
 }
 </script>

@@ -1,4 +1,5 @@
 import jsonp from '@/utils/jsonp.js'
+import axios from 'axios'
 import { commonParams, options } from '@/api/config.js'
 
 export const getRecommend = () => {
@@ -9,4 +10,22 @@ export const getRecommend = () => {
     needNewCode: 1
   })
   return jsonp(url, data, options)
+}
+
+export const getDiscList = () => {
+  const url = '/api/getDiscList'
+  const params = Object.assign({}, commonParams, {
+    rnd: Math.random(),
+    picmid: 1,
+    loginUin: 380644489,
+    hostUin: 0,
+    format: 'json',
+    platform: 'yqq',
+    needNewCode: 0,
+    categoryId: 10000000,
+    sortId: 5,
+    sin: 0,
+    ein: 29
+  })
+  return axios.get(url, { params })
 }

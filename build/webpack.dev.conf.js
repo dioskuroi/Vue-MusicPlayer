@@ -9,6 +9,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+const axios = require('axios')
+const bodyParser = require('body-parser')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -22,6 +24,27 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    // 利用后台代理，获取 qq 音乐的数据
+    before(app) {
+        app.use(bodyParser.urlencoded({ extended: true }))
+        const querystring = require('querystring')
+
+        // 配置获取歌单的 api
+        app.get('/api/getDiscList', (req, res) => {
+          const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+          axios.get(url, {
+            headers: {
+              host: 'c.y.qq.com',
+              referer: 'https://c.y.qq.com/'
+            },
+            params: req.query
+          }).then(response => {
+            res.json(response.data)
+          }).catch(err => {
+            console.log(err)
+          })
+        })
+    },
     clientLogLevel: 'warning',
     historyApiFallback: {
       rewrites: [
