@@ -7,7 +7,7 @@
           <slider>
             <div v-for="(item, index) in recommends" :key="index">
               <a :href="item.linkUrl">
-                <img @load="_loadImage" :src="item.picUrl" />
+                <img class="needsclick" @load="_loadImage" :src="item.picUrl" />
               </a>
             </div>
           </slider>
@@ -17,7 +17,7 @@
           <ul>
             <li v-for="(item, index) in discList" :key="index" class="item">
               <div class="icon">
-                <img :src="item.imgurl" height="60" width="60">
+                <img v-lazy="item.imgurl" height="60" width="60">
               </div>
               <div class="text">
                 <!-- 利用 v-html 可以将 Unicode 编码转换为中文字符 -->
@@ -28,14 +28,18 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
 <script>
 import { getRecommend, getDiscList } from '@/api/recommend.js'
 import { ERR_OK } from '@/api/config.js'
-import Slider from '@/components/base/slider.vue'
-import Scroll from '@/components/base/scroll.vue'
+import Slider from '@/components/base/slider/slider.vue'
+import Scroll from '@/components/base/scroll/scroll.vue'
+import Loading from '@/components/base/loading/loading.vue'
 export default {
   data() {
     return {
@@ -74,7 +78,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>

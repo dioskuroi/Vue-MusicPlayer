@@ -4,8 +4,13 @@ import App from './App'
 import router from '@/router'
 
 import fastclick from 'fastclick'
+import vueLazyLoad from 'vue-lazyload'
 
 import '@/assets/stylus/index.styl'
+
+Vue.use(vueLazyLoad, {
+  loading: require('@/assets/image/default.png')
+})
 
 Vue.config.productionTip = false
 

@@ -129,7 +129,7 @@ export default {
 }
 </script>
 <style scoped lang="stylus">
-  @import "../../assets/stylus/variable"
+  @import "../../../assets/stylus/variable"
 
   .slider
     min-height: 1px
