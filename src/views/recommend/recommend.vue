@@ -1,7 +1,16 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div class="slide-wrapper"></div>
+      <!-- 当轮播图数据没有获取到时，不渲染轮播图组件，防止组件内部获取不到元素 -->
+      <div v-if="recommends.length" class="slide-wrapper">
+        <slider>
+          <div v-for="(item, index) in recommends" :key="index">
+            <a :href="item.linkUrl">
+              <img :src="item.picUrl" />
+            </a>
+          </div>
+        </slider>
+      </div>
       <div class="recommend-list">
         <h1 class="list-title">热门歌曲推荐</h1>
         <ul></ul>
@@ -12,22 +21,28 @@
 <script>
 import { getRecommend } from '@/api/recommend.js'
 import { ERR_OK } from '@/api/config.js'
+import Slider from '@/components/base/slider.vue'
 export default {
   data() {
     return {
+      recommends: []
     }
   },
   methods: {
+    // 获取轮播图数据
     _getRecommend() {
       getRecommend().then(res => {
         if (res.code === ERR_OK) {
-          console.log(res)
+          this.recommends = res.data.slider
         }
       })
     }
   },
   created() {
     this._getRecommend()
+  },
+  components: {
+    Slider
   }
 }
 </script>
