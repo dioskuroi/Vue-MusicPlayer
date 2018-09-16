@@ -11,7 +11,7 @@
       <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
-          <li v-for="(item, i) in group.items" class="list-group-item" :key="i">
+          <li @click="selectItem(item)" v-for="(item, i) in group.items" class="list-group-item" :key="i">
             <img v-lazy="item.avatar" class="avatar">
             <span class="name">{{ item.name }}</span>
           </li>
@@ -85,6 +85,10 @@ export default {
     Loading
   },
   methods: {
+    // 派发选中的歌手
+    selectItem(item) {
+      this.$emit('select', item)
+    },
     // 点击某个快捷索引，能定位到此索引的歌手列表
     onShortcutTouchStart(e) {
       const anchorIndex = e.target.dataset.index
@@ -95,7 +99,7 @@ export default {
     // 在快捷索引滑动时，歌手列表也能跟着滑动
     onShortcutTouchMove(e) {
       this.touch.y2 = e.touches[0].pageY
-      // 这里的或 0 就相当于 Math.floor 的效果，向下取整
+      // 这里的与位或 0 就相当于 Math.floor 的效果，向下取整
       const delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
       this._scrollTo(this.touch.anchorIndex / 1 + delta)
     },
@@ -107,7 +111,6 @@ export default {
     _scrollTo(index) {
       // 当点击快捷索引栏时，需要手动给 scrollY 赋值
       this.scrollY = -this.listHeight[index]
-      console.log(this.scrollY)
       // scrollToElement 第二个参数是指定缓动动画的持续时间，0表示没有动画效果
       this.$refs.listView.scrollToElement(this.$refs.listGroup[index], 0)
     },

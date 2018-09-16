@@ -26,24 +26,40 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   devServer: {
     // 利用后台代理，获取 qq 音乐的数据
     before(app) {
-        app.use(bodyParser.urlencoded({ extended: true }))
-        const querystring = require('querystring')
+      app.use(bodyParser.urlencoded({ extended: true }))
+      const querystring = require('querystring')
 
-        // 配置获取歌单的 api
-        app.get('/api/getDiscList', (req, res) => {
-          const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
-          axios.get(url, {
-            headers: {
-              host: 'c.y.qq.com',
-              referer: 'https://c.y.qq.com/'
-            },
-            params: req.query
-          }).then(response => {
-            res.json(response.data)
-          }).catch(err => {
-            console.log(err)
-          })
+      // 配置获取歌单的 api
+      app.get('/api/getDiscList', (req, res) => {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+        axios.get(url, {
+          headers: {
+            host: 'c.y.qq.com',
+            referer: 'https://c.y.qq.com/'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(err => {
+          console.log(err)
         })
+      })
+      
+      // 配置获取歌曲 url 的 api
+      app.post('/api/getPurlUrl', bodyParser.json(), (req, res) => {
+        const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+        axios.post(url, req.body, {
+          headers: {
+            referer: 'https://y.qq.com/',
+            origin: 'https://y.qq.com',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(response => {
+          res.json(response.data)
+        }).catch(err => {
+          console.log(err)
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {

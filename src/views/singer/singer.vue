@@ -1,6 +1,9 @@
 <template>
   <div class="singer">
-    <list-view :data="singers"></list-view>
+    <list-view :data="singers" @select="selectSinger"></list-view>
+    <transition>
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 <script>
@@ -8,6 +11,7 @@ import { getSingerList } from '@/api/singer.js'
 import { ERR_OK } from '@/api/config.js'
 import Singer from '@/utils/singer.js'
 import ListView from '@/components/base/listView/listView.vue'
+import {mapMutations} from 'vuex'
 
 // 热门歌手的常量
 const HOT_NAME = '热门'
@@ -20,6 +24,11 @@ export default {
     }
   },
   methods: {
+    // 跳转到当前选中的歌手详情页
+    selectSinger(singer) {
+      this.$router.push(`/singer/${singer.id}`)
+      this.setSinger(singer)
+    },
     // 获取歌手数据
     _getSingerList() {
       getSingerList().then(res => {
@@ -70,7 +79,12 @@ export default {
       // 从 A-Z 进行排序
       ret.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0))
       return hot.concat(ret)
-    }
+    },
+    // 导入 mapMutations
+    ...mapMutations({
+      // 将 SET_SINGER 映射为 setSinger
+      setSinger: 'SET_SINGER'
+    })
   },
   components: {
     ListView
@@ -86,4 +100,8 @@ export default {
     width: 100%
     top: 88px
     bottom: 0
+    .v-enter-active,.v-leave-active
+      transition all .3s
+    .v-enter,.v-leave-to
+      transform translate3d(100%,0,0)
 </style>
